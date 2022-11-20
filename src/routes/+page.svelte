@@ -1,59 +1,129 @@
-<script>
-	import Counter from './Counter.svelte';
-	import welcome from '$lib/images/svelte-welcome.webp';
-	import welcome_fallback from '$lib/images/svelte-welcome.png';
+<script lang="ts">
+	import Grid from './Grid.svelte';
+	import GameGrid from './game.js';
+	import { P_INITIAL_MOTICOSTS } from '$env/static/public';
+	import { URLS } from '$lib/urls';
+
+	let score = 0;
+	let moti = 0;
+	let motiCost = calcMotiCost(0);
+	let katkoja = 0;
+	let grid: GameGrid;
+
+	(function startGame() {
+		score = 0;
+		moti = 0;
+		motiCost = calcMotiCost(0);
+		katkoja = 0;
+
+		grid = new GameGrid(4, 4, {
+			onWin() {
+				alert(`Voitit pisteillä ` + score + '!');
+				startGame();
+			},
+			onLoss() {
+				fetch(URLS.POSTSCORE, {
+					method: 'POST',
+					body: score.toString()
+				});
+				alert(`Hävisit pisteillä ` + score + '!');
+				startGame();
+			},
+			onAddScore(add) {
+				score += add;
+				moti += add;
+			}
+		});
+	})();
+
+	function tryKoeviikko() {
+		if (moti >= motiCost) {
+			moti -= motiCost;
+			motiCost = calcMotiCost(++katkoja);
+			grid.katkoReissu();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	function calcMotiCost(n) {
+		if (n < 5) return +P_INITIAL_MOTICOSTS.split(',')[n]; //50 * x^2 - (50 * x) + 1000;
+		else return 500 * (n + 1) ** 2 - 4500 * (n + 1) + 12000; // (2000), 3000, 5000, 8000, 12000
+	}
+
+	function handleKd(e) {
+		switch (e.key.toLowerCase()) {
+			case 'arrowup':
+			case 'w':
+				grid.move(0);
+				break;
+			case 'arrowleft':
+			case 'a':
+				grid.move(3);
+				break;
+			case 'arrowdown':
+			case 's':
+				grid.move(2);
+				break;
+			case 'arrowright':
+			case 'd':
+				grid.move(1);
+				break;
+			default:
+				return;
+		}
+		grid = grid;
+	}
 </script>
 
 <svelte:head>
 	<title>Home</title>
 	<meta name="description" content="Svelte demo app" />
 </svelte:head>
+<svelte:window on:keydown={handleKd} />
 
-<section>
-	<h1>
-		<span class="welcome">
-			<picture>
-				<source srcset={welcome} type="image/webp" />
-				<img src={welcome_fallback} alt="Welcome" />
-			</picture>
-		</span>
-
-		to your new<br />SvelteKit app
-	</h1>
-
-	<h2>
-		try editing <strong>src/routes/+page.svelte</strong>
-	</h2>
-
-	<Counter />
+<section class="flex justify-center">
+	<div class="flex flex-col">
+		<div class="flex gap-7 p-3">
+			<h1 class="tracking-widest font-thin">Oispa Eliitti</h1>
+			<div class="box grow rounded flex flex-col justify-around">
+				<p>Moti :</p>
+				<p class="font-bold">{moti}</p>
+			</div>
+			<div class="box grow rounded flex flex-col justify-around">
+				<p>Pisteet :</p>
+				<p class="font-bold">{score}</p>
+			</div>
+		</div>
+		<div class="inline-flex">
+			<Grid {grid} />
+		</div>
+		<div class="flex gap-3 p-3 rounded">
+			<button
+				disabled={moti < motiCost}
+				class:bg-lime-200={moti >= motiCost}
+				on:click={tryKoeviikko}>Koeviikko ({motiCost})</button
+			>
+			<button>Ohje</button>
+		</div>
+	</div>
 </section>
 
 <style>
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		flex: 0.6;
+	button,
+	.box {
+		background-color: rgba(245, 245, 245, 0.8);
+		color: #101010;
+		@apply rounded p-3 shadow-lg drop-shadow-lg border-2 border-black/80;
 	}
-
-	h1 {
-		width: 100%;
+	button {
+		background-color: rgba(245, 245, 245, 0.9);
 	}
-
-	.welcome {
-		display: block;
-		position: relative;
-		width: 100%;
-		height: 0;
-		padding: 0 0 calc(100% * 495 / 2048) 0;
+	button[disabled] {
+		background-color: rgb(218, 218, 218, 0.9);
 	}
-
-	.welcome img {
-		position: absolute;
-		width: 100%;
-		height: 100%;
-		top: 0;
-		display: block;
+	button:hover:not([disabled]) {
+		background-color: rgb(234, 234, 234);
 	}
 </style>

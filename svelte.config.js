@@ -8,7 +8,10 @@ const config = {
 	preprocess: preprocess(),
 
 	kit: {
-		adapter: adapter()
+		adapter: adapter(),
+		env: {
+			publicPrefix: 'P_'
+		}
 	}
 };
 
