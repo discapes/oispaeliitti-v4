@@ -10,7 +10,7 @@
 
 <div class="flex justify-center p-10">
 	{#if data.loggedIn}
-		<div class="bg-stone-700/50 p-10 flex flex-col gap-5">
+		<div class="bg-stone-700/50 p-10 flex flex-col gap-5 rounded">
 			<table>
 				<tr>
 					<th>Pisteet</th>
@@ -32,7 +32,9 @@
 			</table>
 		</div>
 	{:else if form?.success}
-		<div class="bg-stone-700/50 p-10">Katso sähköpostisi. Voit sulkea tämän välilehden.</div>
+		<div class="bg-stone-700/50 p-5 text-xl rounded ">
+			Katso sähköpostisi. Voit sulkea tämän välilehden.
+		</div>
 	{:else}
 		<form class="bg-stone-700/50 flex flex-col gap-2 rounded p-5" method="POST" use:enhance>
 			<label for="email" class="text-xl">Sähköposti:</label>
@@ -54,6 +56,7 @@
 	}
 	table {
 		border: white solid 1px;
+		border-width: 1px;
 		padding: 5px;
 	}
 </style>

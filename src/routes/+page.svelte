@@ -22,8 +22,6 @@
 					method: 'POST',
 					body: score.toString()
 				});
-				alert(`Voitit pisteillä ` + score + '!');
-				startGame();
 			},
 			onLoss() {
 				fetch(URLS.POSTSCORE, {
