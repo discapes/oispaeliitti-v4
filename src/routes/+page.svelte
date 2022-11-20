@@ -18,6 +18,10 @@
 
 		grid = new GameGrid(4, 4, {
 			onWin() {
+				fetch(URLS.POSTSCORE, {
+					method: 'POST',
+					body: score.toString()
+				});
 				alert(`Voitit pisteillä ` + score + '!');
 				startGame();
 			},
@@ -41,6 +45,7 @@
 			moti -= motiCost;
 			motiCost = calcMotiCost(++katkoja);
 			grid.katkoReissu();
+			grid = grid;
 			return true;
 		} else {
 			return false;
@@ -78,8 +83,18 @@
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<link rel="prefetch" href="/img/2.png" />
+	<link rel="prefetch" href="/img/4.png" />
+	<link rel="prefetch" href="/img/8.png" />
+	<link rel="prefetch" href="/img/16.png" />
+	<link rel="prefetch" href="/img/32.png" />
+	<link rel="prefetch" href="/img/64.png" />
+	<link rel="prefetch" href="/img/128.png" />
+	<link rel="prefetch" href="/img/256.png" />
+	<link rel="prefetch" href="/img/512.png" />
+	<link rel="prefetch" href="/img/1024.png" />
+	<link rel="prefetch" href="/img/2048.png" />
+	<link rel="prefetch" href="/img/4096.png" />
 </svelte:head>
 <svelte:window on:keydown={handleKd} />
 
@@ -87,26 +102,23 @@
 	<div class="flex flex-col">
 		<div class="flex gap-7 p-3">
 			<h1 class="tracking-widest font-thin">Oispa Eliitti</h1>
-			<div class="box grow rounded flex flex-col justify-around">
-				<p>Moti :</p>
-				<p class="font-bold">{moti}</p>
+			<div class="box grow rounded flex flex-col justify-around gap-3">
+				<p>Moti: <span class="font-bold">{moti}</span></p>
+				<p>Pisteet: <span class="font-bold">{score}</span></p>
 			</div>
-			<div class="box grow rounded flex flex-col justify-around">
-				<p>Pisteet :</p>
-				<p class="font-bold">{score}</p>
-			</div>
+			<button
+				class="text-center"
+				disabled={moti < motiCost}
+				class:bg-lime-200={moti >= motiCost}
+				on:click={tryKoeviikko}
+				><p>Koeviikko</p>
+				({motiCost})</button
+			>
 		</div>
 		<div class="inline-flex">
 			<Grid {grid} />
 		</div>
-		<div class="flex gap-3 p-3 rounded">
-			<button
-				disabled={moti < motiCost}
-				class:bg-lime-200={moti >= motiCost}
-				on:click={tryKoeviikko}>Koeviikko ({motiCost})</button
-			>
-			<button>Ohje</button>
-		</div>
+		<div class="flex gap-3 p-3 rounded" />
 	</div>
 </section>
 
@@ -118,10 +130,7 @@
 		@apply rounded p-3 shadow-lg drop-shadow-lg border-2 border-black/80;
 	}
 	button {
-		background-color: rgba(245, 245, 245, 0.9);
-	}
-	button[disabled] {
-		background-color: rgb(218, 218, 218, 0.9);
+		background-color: rgba(245, 245, 245, 0.8);
 	}
 	button:hover:not([disabled]) {
 		background-color: rgb(234, 234, 234);

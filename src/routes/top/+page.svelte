@@ -34,10 +34,15 @@
 	{:else if form?.success}
 		<div class="bg-stone-700/50 p-10">Katso sähköpostisi. Voit sulkea tämän välilehden.</div>
 	{:else}
-		<form class="bg-stone-700/50 flex flex-col gap-3 rounded p-10" method="POST" use:enhance>
-			<label for="email">Sähköposti</label>
-			<input placeholder="..." type="email" name="email" class="text-black p-1" />
-			<input type="submit" class="bg-stone-700/50 p-1" />
+		<form class="bg-stone-700/50 flex flex-col gap-2 rounded p-5" method="POST" use:enhance>
+			<label for="email" class="text-xl">Sähköposti:</label>
+			<input
+				placeholder="xd1234@edu.turku.fi"
+				type="email"
+				name="email"
+				class="text-black p-2 rounded"
+			/>
+			<input type="submit" class="bg-stone-700/50 p-2 rounded" value="Kirjaudu" />
 		</form>
 	{/if}
 </div>

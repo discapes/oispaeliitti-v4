@@ -4,6 +4,11 @@
 	import './normalize.css';
 </script>
 
+<svelte:head>
+	<title>Oispa Eliitti</title>
+</svelte:head>
+
+<link rel="prefetch" href="/images/big.jpeg" />
 <div class="app">
 	<Header />
 

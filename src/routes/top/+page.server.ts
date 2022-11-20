@@ -12,7 +12,7 @@ export const actions: Actions = {
 		if (typeof email != 'string' || !email.endsWith('edu.turku.fi')) {
 			return {
 				success: false,
-				message: 'Vain edu.turku.fi-sähköpostit toimivat tällä hetkellä.'
+				message: 'Syötä edu.turku.fi-sähköposti.'
 			};
 		}
 
