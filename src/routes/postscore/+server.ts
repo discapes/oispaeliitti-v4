@@ -8,8 +8,8 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 	if (!cookies.get('token')) throw error(400);
 
 	const token = decrypt(cookies.get('token')!);
-	if (!token.startsWith('iown-')) throw new Error('Invalid token');
-	const email = token.slice('iown-'.length);
+	if (!token.startsWith('iown2-')) throw error(400, 'Invalid token');
+	const [, email, linja] = token.split('-');
 
 	const score = +(await request.text());
 
@@ -18,6 +18,7 @@ export const POST: RequestHandler = async ({ cookies, request }) => {
 	});
 	await client.connect();
 	await client.zAdd('players', { score, value: email }, { GT: true });
+	await client.hIncrBy('points', linja, score);
 	await client.disconnect();
 	return new Response(null);
 };
