@@ -10,7 +10,7 @@ export const actions: Actions = {
 	default: async ({ request, url }) => {
 		const data = await request.formData();
 		const email = data.get('email');
-		if (typeof email != 'string' || !email.endsWith('edu.turku.fi')) {
+		if (typeof email != 'string' || email.includes(",") || !email.endsWith('edu.turku.fi')) {
 			return {
 				success: false,
 				message: 'Syötä edu.turku.fi-sähköposti.'
