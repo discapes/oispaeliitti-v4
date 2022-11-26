@@ -1,5 +1,6 @@
 export const URLS = {
 	LOGIN: '/login',
 	ABOUT: '/top',
-	POSTSCORE: '/postscore'
+	POSTSCORE: '/postscore',
+	ADMIN: '/admin'
 };

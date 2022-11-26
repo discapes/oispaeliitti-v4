@@ -10,7 +10,7 @@
 		<p>
 			<i>ohjaus:</i><b>&nbsp;WASD&nbsp;/&nbsp;←↑↓→</b>
 		</p>
-		<p><i>Oispa Eliitti</i> by Miika, Lennu L. & OPKH</p>
+		<p><i>Oispa Eliitti</i> by <span class="text-xl">Miika</span>, Lennu L. & OPKH</p>
 		<a href="https://blog.edu.turku.fi/tsyk/" rel="noreferrer" target="_blank"
 			><img class="inline-block h-[100px] m-5" alt="tsyk logo" src="favicon.png" />
 		</a>

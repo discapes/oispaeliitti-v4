@@ -31,7 +31,7 @@
 				alert(`Hävisit pisteillä ` + score + '!');
 				startGame();
 			},
-			onAddScore(add) {
+			onAddScore(add: number) {
 				score += add;
 				moti += add;
 			}
@@ -50,12 +50,12 @@
 		}
 	}
 
-	function calcMotiCost(n) {
+	function calcMotiCost(n: number) {
 		if (n < 5) return +P_INITIAL_MOTICOSTS.split(',')[n]; //50 * x^2 - (50 * x) + 1000;
 		else return 500 * (n + 1) ** 2 - 4500 * (n + 1) + 12000; // (2000), 3000, 5000, 8000, 12000
 	}
 
-	function handleKd(e) {
+	function handleKd(e: KeyboardEvent) {
 		switch (e.key.toLowerCase()) {
 			case 'arrowup':
 			case 'w':

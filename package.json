@@ -37,6 +37,7 @@
 	"type": "module",
 	"dependencies": {
 		"@redis/client": "^1.4.0",
+		"mongodb": "^4.12.1",
 		"nodemailer": "^6.8.0"
 	}
 }

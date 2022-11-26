@@ -1,20 +1,20 @@
 <script lang="ts">
-	import { applyAction, enhance } from '$app/forms';
-	import { Result } from 'postcss';
+	import { browser } from '$app/environment';
+	import { enhance } from '$app/forms';
 	import type { ActionData, PageData } from './$types';
 
 	export let form: ActionData;
 	export let data: PageData;
 
-	$: if (form?.message) alert(form.message);
+	$: if (form?.type === 'validation_error' && browser) alert(form.message);
 	let { pl, py, pm } = data.total ?? { pl: 0, py: 0, pm: 0 };
 	let loading = false;
-	let success = false;
 </script>
 
 <div class="flex justify-center p-10">
 	{#if data.loggedIn}
-		<div class="bg-stone-700/50 p-10 flex flex-col gap-5 rounded">
+		<div class="bg-stone-700/50 p-10 flex flex-col gap-10 rounded items-center">
+			<div>Oma ennätys: <b>{data.myscore ?? '0'}</b></div>
 			<table>
 				<tr>
 					<th>Pisteet</th>
@@ -23,40 +23,52 @@
 				{#each data.top as entry}
 					<tr>
 						<td>{entry.score}</td>
-						<td>{entry.value}</td>
+						<td>{entry.nick}</td>
 					</tr>
 				{/each}
 			</table>
 
-			<table>
-				<tr>
-					<td>{data.myscore}</td>
-					<td>{data.email}</td>
-				</tr>
-			</table>
+			<div class="flex flex-col gap-2 w-full">
+				<h2 class="text-center text-xl mt-3 ">Yhteensä</h2>
+				<div class="flex justify-around items-end border-y">
+					<div
+						style="height: {(pl / Math.max(pl, py, pm)) * 100}px;"
+						class="bg-green-400/90 w-10"
+					/>
+					<div style="height: {(py / Math.max(pl, py, pm)) * 100}px;" class="bg-red-400/90 w-10" />
+					<div style="height: {(pm / Math.max(pl, py, pm)) * 100}px;" class="bg-blue-400/90 w-10" />
+				</div>
+				<div class="flex justify-around">
+					<div class:font-bold={data.linja === 'lulu'} class="text-green-200/90 w-10">LULU</div>
+					<div class:font-bold={data.linja === 'yle'} class="text-red-200/90 w-10">YLE</div>
+					<div class:font-bold={data.linja === 'melu'} class="text-blue-200/90 w-10">MELU</div>
+				</div>
+			</div>
 
-			<h2 class="text-center text-xl mt-3 -mb-4">Yhteensä</h2>
-			<div class="flex justify-around items-end border-y">
-				<div style="height: {(pl / Math.max(pl, py, pm)) * 100}px;" class="bg-green-400/90 w-10" />
-				<div style="height: {(py / Math.max(pl, py, pm)) * 100}px;" class="bg-red-400/90 w-10" />
-				<div style="height: {(pm / Math.max(pl, py, pm)) * 100}px;" class="bg-blue-400/90 w-10" />
-			</div>
-			<div class="flex justify-around -mt-2">
-				<div class:font-bold={data.linja === 'lulu'} class="text-green-200/90 w-10">LULU</div>
-				<div class:font-bold={data.linja === 'yle'} class="text-red-200/90 w-10">YLE</div>
-				<div class:font-bold={data.linja === 'melu'} class="text-blue-200/90 w-10">MELU</div>
-			</div>
+			<form method="POST" class="flex gap-3" action="?/rename">
+				<input
+					type="text"
+					name="nick"
+					class="bg-stone-700/50 outline-none p-2 rounded"
+					placeholder="Pelinimi"
+					value={data.mynick ?? ''}
+				/>
+				<input type="submit" class="cursor-pointer" value="💾" />
+			</form>
+
+			{#if data.admin_url}
+				<a class="underline-offset-4 underline" href={data.admin_url}>Go to admin</a>
+			{/if}
 		</div>
-	{:else if form?.success}
-		<div class="bg-stone-700/50 p-5 text-xl rounded ">
-			Katso sähköpostisi (myös roskaposti). Voit sulkea tämän välilehden.
-		</div>
+	{:else if form?.type === 'check_email'}
+		<div class="bg-stone-700/50 p-5 text-xl rounded ">{form.message}</div>
 	{:else if loading}
 		<div class="bg-stone-700/50 p-5 text-xl rounded ">...</div>
 	{:else}
 		<form
 			class="bg-stone-700/50 flex flex-col gap-2 rounded p-5"
 			method="POST"
+			action="?/login"
 			use:enhance={() => {
 				loading = true;
 				return async ({ result, update }) => {
