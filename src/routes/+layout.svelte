@@ -1,7 +1,8 @@
 <script>
 	import Header from './Header.svelte';
-	import './styles.css';
+	import './tailwind.css';
 	import './normalize.css';
+	import './styles.css';
 </script>
 
 <svelte:head>

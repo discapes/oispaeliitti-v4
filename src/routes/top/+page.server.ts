@@ -1,16 +1,27 @@
-import type { Actions, PageServerLoad } from './$types';
-import { createClient } from '@redis/client';
+import { ADMIN_EMAIL } from '$env/static/private';
 import { decrypt, encrypt } from '$lib/crypto';
 import { sendMail } from '$lib/mail';
-import { ADMIN_EMAIL, REDIS_URL } from '$env/static/private';
+import {
+	getLeaderboard,
+	getLinjaScores,
+	getScoreMsgAndNick,
+	mongo,
+	redis,
+	setNick
+} from '$lib/model';
 import { URLS } from '$lib/urls';
-import { getLeaderboard, getScore, getScoreAndNick, setNick, setScore } from '$lib/model';
-import { error } from '@sveltejs/kit';
+import { error, type Cookies } from '@sveltejs/kit';
+import type { Actions, PageServerLoad } from './$types';
 
-type ActionResult = Promise<{
-	type: 'validation_error' | 'check_email' | 'rename_success';
-	message: string;
-}>;
+type ActionResult = Promise<
+	| {
+			type: 'validation_error' | 'check_email';
+			message: string;
+	  }
+	| {
+			type: 'rename_success';
+	  }
+>;
 
 export const actions: Actions = {
 	login: async ({ request, url }): ActionResult => {
@@ -44,26 +55,52 @@ export const actions: Actions = {
 		};
 	},
 	async rename({ request, cookies }): ActionResult {
-		if (!cookies.get('token')) throw error(400);
-
-		const token = decrypt(cookies.get('token')!);
-		if (!token.startsWith('iown2-')) throw error(400, 'Invalid token');
-		const [, email] = token.split('-');
+		const { email } = auth(cookies);
 		const nick = (await request.formData()).get('nick');
 
-		if (typeof nick === 'string' && nick.length >= 3 && nick.length <= 20) {
-			setNick(email, nick);
+		if (typeof nick !== 'string' || nick.length < 3 || nick.length > 20) {
 			return {
-				type: 'rename_success',
-				message: 'Nimi vaihdettu.'
+				type: 'validation_error',
+				message: 'Nimen pitää olla 3-20 kirjainta.'
 			};
 		}
-		return {
-			type: 'validation_error',
-			message: 'Nimen pitää olla 3-20 kirjainta.'
-		};
+		const [close, client] = await redis();
+		const [blockedNick, blockedEmail] = await Promise.all([
+			client.sIsMember('blockedNicks', nick),
+			client.sIsMember('blockedEmails', email)
+		]);
+		close();
+
+		if (blockedNick) {
+			return {
+				type: 'validation_error',
+				message: 'Kielletty nimi.'
+			};
+		} else if (blockedEmail) {
+			return {
+				type: 'validation_error',
+				message: 'Sinut on estetty.'
+			};
+		} else {
+			setNick(email, nick);
+			return { type: 'rename_success' };
+		}
+	},
+	async readmsg({ cookies }) {
+		const { email } = auth(cookies);
+		const [close, db] = mongo();
+		const res = await db.updateOne({ email }, { $unset: { msg: '' } });
+		close();
 	}
 };
+
+function auth(cookies: Cookies) {
+	if (!cookies.get('token')) throw error(400);
+	const token = decrypt(cookies.get('token')!);
+	if (!token.startsWith('iown2-')) throw error(400, 'Invalid token');
+	const [, email, linja] = token.split('-');
+	return { email, linja };
+}
 
 type LoadResult =
 	| {
@@ -71,12 +108,13 @@ type LoadResult =
 	  }
 	| {
 			loggedIn: true;
-			top: { score: number; nick: string }[];
+			top: { score: number; nick: string; color?: string }[];
 			email: string;
 			myscore?: string;
 			total: { pl: number; pm: number; py: number };
 			linja: string;
 			mynick?: string;
+			mymsg?: string;
 			admin_url?: string;
 	  };
 
@@ -94,30 +132,23 @@ export const load: PageServerLoad = async ({ cookies }): Promise<LoadResult> => 
 		};
 	const [, email, linja] = token.split('-');
 
-	const client = createClient({
-		url: REDIS_URL
-	});
-	await client.connect();
-
-	const Pmy = getScoreAndNick(email);
+	const Pmy = getScoreMsgAndNick(email);
 	const Ptop = getLeaderboard();
-	const Plinjat = client.hGetAll('points');
-
+	const Plinjat = getLinjaScores();
 	const [my, top, { yle, lulu, melu }] = await Promise.all([Pmy, Ptop, Plinjat]);
-
-	/*await*/ client.disconnect();
 
 	return {
 		loggedIn: true,
 		top,
 		email,
 		total: {
-			pl: +lulu || 0, // * 10,
-			py: +yle || 0, // * 6,
-			pm: +melu || 0 // * 25
+			pl: lulu, // * 10,
+			py: yle, // * 6,
+			pm: melu // * 25
 		},
 		linja,
 		myscore: my?.score?.toString(),
+		mymsg: my?.msg,
 		mynick: my?.nick,
 		admin_url: email === ADMIN_EMAIL ? URLS.ADMIN : undefined
 	};

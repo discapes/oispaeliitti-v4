@@ -64,7 +64,7 @@
 	nav {
 		display: flex;
 		justify-content: center;
-		--background: rgba(255, 255, 255, 0.7);
+		/*--background: rgba(255, 255, 255, 0.7);*/
 	}
 
 	svg {
@@ -74,7 +74,7 @@
 	}
 
 	path {
-		fill: var(--background);
+		fill: var(--color-bg);
 	}
 
 	ul {
@@ -86,7 +86,7 @@
 		justify-content: center;
 		align-items: center;
 		list-style: none;
-		background: var(--background);
+		background: var(--color-bg);
 		background-size: contain;
 	}
 
@@ -112,7 +112,7 @@
 		height: 100%;
 		align-items: center;
 		padding: 0 0.5rem;
-		color: black;
+		color: var(--color-text);
 		font-weight: 700;
 		font-size: 0.8rem;
 		text-transform: uppercase;
@@ -122,6 +122,7 @@
 	}
 
 	a:hover {
-		color: var(--color-theme-1);
+		/* color: background-color: --color-theme-1); */
+		text-shadow: #fff 1px 0 10px;
 	}
 </style>

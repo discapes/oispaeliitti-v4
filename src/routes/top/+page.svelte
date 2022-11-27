@@ -7,15 +7,33 @@
 	export let data: PageData;
 
 	$: if (form?.type === 'validation_error' && browser) alert(form.message);
+	$: if (data.mymsg && browser) {
+		alert(data.mymsg);
+		fetch('?/readmsg', {
+			method: 'POST',
+			body: new FormData()
+		});
+	}
+
 	let { pl, py, pm } = data.total ?? { pl: 0, py: 0, pm: 0 };
 	let loading = false;
+
+	function sanitizeHexColor(color: string) {
+		if (
+			color.length === 7 &&
+			color[0] === '#' &&
+			[...color.slice(1)].every((c) => '0123456789aAbBcCdDeEfF'.includes(c))
+		)
+			return color;
+		return null;
+	}
 </script>
 
 <div class="flex justify-center p-10">
 	{#if data.loggedIn}
-		<div class="bg-stone-700/50 p-10 flex flex-col gap-10 rounded items-center">
+		<div class="bg p-10 flex flex-col gap-10 rounded items-center">
 			<div>Oma ennätys: <b>{data.myscore ?? '0'}</b></div>
-			<table>
+			<table class="bg">
 				<tr>
 					<th>Pisteet</th>
 					<th>Nimi</th>
@@ -23,7 +41,9 @@
 				{#each data.top as entry}
 					<tr>
 						<td>{entry.score}</td>
-						<td>{entry.nick}</td>
+						<td style="color: {entry.color ? sanitizeHexColor(entry.color) : 'white'}">
+							{entry.nick}
+						</td>
 					</tr>
 				{/each}
 			</table>
@@ -45,11 +65,11 @@
 				</div>
 			</div>
 
-			<form method="POST" class="flex gap-3" action="?/rename">
+			<form method="POST" class="flex gap-3" action="?/rename" use:enhance>
 				<input
 					type="text"
 					name="nick"
-					class="bg-stone-700/50 outline-none p-2 rounded"
+					class="bg outline-none p-2 rounded"
 					placeholder="Pelinimi"
 					value={data.mynick ?? ''}
 				/>
@@ -61,12 +81,12 @@
 			{/if}
 		</div>
 	{:else if form?.type === 'check_email'}
-		<div class="bg-stone-700/50 p-5 text-xl rounded ">{form.message}</div>
+		<div class="bg p-5 text-xl rounded ">{form.message}</div>
 	{:else if loading}
-		<div class="bg-stone-700/50 p-5 text-xl rounded ">...</div>
+		<div class="bg p-5 text-xl rounded ">...</div>
 	{:else}
 		<form
-			class="bg-stone-700/50 flex flex-col gap-2 rounded p-5"
+			class="bg flex flex-col gap-2 rounded p-5"
 			method="POST"
 			action="?/login"
 			use:enhance={() => {
@@ -101,7 +121,7 @@
 
 			<input
 				type="submit"
-				class="bg-stone-700/50 p-2 rounded cursor-pointer hover:bg-stone-700/80"
+				class="bg p-2 rounded cursor-pointer hover:bg-stone-700/80"
 				value="Kirjaudu"
 			/>
 		</form>

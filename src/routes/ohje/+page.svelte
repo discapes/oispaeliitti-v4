@@ -1,5 +1,5 @@
 <div class="flex flex-col items-center">
-	<div class="text-center text-lg bg-stone-700/50 p-5 m-10 max-w-lg rounded">
+	<div class="text-center text-lg bg p-5 m-10 max-w-lg rounded">
 		<div class="text-2xl p-5">Lisää tietoja tulossa...</div>
 		<p>
 			Yhdistä samanlaiset kuvat käyttämällä nuolinäppäimiä tai pyyhkäisyä. Yritä selvitä

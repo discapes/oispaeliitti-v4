@@ -1,8 +1,8 @@
 <script lang="ts">
 	export let data: Record<string, unknown>[];
 
-	const headers = Array.from(new Set(data.flatMap(Object.keys)));
-	const rows = data.map((entry) => headers.map((h) => entry[h]));
+	$: headers = Array.from(new Set(data.flatMap(Object.keys)));
+	$: rows = data.map((entry) => headers.map((h) => entry[h]));
 </script>
 
 <table>
