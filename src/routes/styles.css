@@ -39,6 +39,17 @@ body {
 	background-color: var(--color-bg-dark);
 }
 
+.button {
+	@apply cursor-pointer border p-2 rounded;
+	background-color: var(--color-bg);
+}
+
+
+.button:hover {
+	background-color: var(--color-bg-dark);
+	/*hover:bg*/
+}
+
 /* 
 h1 {
 	margin: 0;

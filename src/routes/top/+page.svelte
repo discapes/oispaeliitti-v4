@@ -27,6 +27,19 @@
 			return color;
 		return null;
 	}
+
+	let feedbackModal = false;
+	// function feedback() {
+	// 	const feedback = prompt('Palaute?');
+	// 	if (feedback) {
+	// 		const fd = new FormData();
+	// 		fd.append("feedback")
+	// 		fetch('?/feedback', {
+	// 		method: 'POST',
+	// 		body: fd
+	// 	});
+	// 	}
+	// }
 </script>
 
 <div class="flex justify-center p-10">
@@ -49,7 +62,7 @@
 			</table>
 
 			<div class="flex flex-col gap-2 w-full">
-				<h2 class="text-center text-xl mt-3 ">Yhteensä</h2>
+				<h2 class="text-center text-xl mt-3 ">Kaikki pelit</h2>
 				<div class="flex justify-around items-end border-y">
 					<div
 						style="height: {(pl / Math.max(pl, py, pm)) * 100}px;"
@@ -69,13 +82,47 @@
 				<input
 					type="text"
 					name="nick"
-					class="bg outline-none p-2 rounded"
+					class="bg outline-none p-2 rounded border"
 					placeholder="Pelinimi"
 					value={data.mynick ?? ''}
 				/>
 				<input type="submit" class="cursor-pointer" value="💾" />
 			</form>
 
+			<button on:click={() => (feedbackModal = true)} class="button"> Lähetä palautetta </button>
+			{#if feedbackModal}
+				<div class="modal flex items-center justify-center">
+					<div class="bg-dark relative w-[400px] p-5 flex flex-col gap-5 items-start rounded">
+						<button
+							type="button"
+							on:click={() => (feedbackModal = false)}
+							class="absolute right-5 top-5 text-2xl leading-[15px]"
+							>&times;
+						</button>
+						<h1 class="my-0">Palaute</h1>
+						<form
+							action="?/feedback"
+							class="contents"
+							method="POST"
+							use:enhance={() =>
+								async ({ result, update }) => {
+									feedbackModal = false;
+									await update();
+									alert('Palautteeseesi pyritään vastaamaan mahdollisimman pian.');
+								}}
+						>
+							<textarea
+								required
+								class="bg p-1 w-full resize-y border outline-none rounded"
+								type="textarea"
+								name="text"
+								rows="4"
+							/>
+							<input class="button" value="Lähetä" type="submit" />
+						</form>
+					</div>
+				</div>
+			{/if}
 			{#if data.admin_url}
 				<a class="underline-offset-4 underline" href={data.admin_url}>Go to admin</a>
 			{/if}
@@ -137,5 +184,16 @@
 		border: white solid 1px;
 		border-width: 1px;
 		padding: 5px;
+	}
+	.modal {
+		position: fixed; /* Stay in place */
+		z-index: 1; /* Sit on top */
+		left: 0;
+		top: 0;
+		width: 100%; /* Full width */
+		height: 100%; /* Full height */
+		overflow: auto; /* Enable scroll if needed */
+		background-color: rgb(0, 0, 0); /* Fallback color */
+		background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
 	}
 </style>

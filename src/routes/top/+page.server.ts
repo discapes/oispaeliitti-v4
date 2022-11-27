@@ -1,4 +1,4 @@
-import { ADMIN_EMAIL } from '$env/static/private';
+import { ADMIN_EMAIL, FEEDBACK_EMAIL } from '$env/static/private';
 import { decrypt, encrypt } from '$lib/crypto';
 import { sendMail } from '$lib/mail';
 import {
@@ -91,6 +91,17 @@ export const actions: Actions = {
 		const [close, db] = mongo();
 		const res = await db.updateOne({ email }, { $unset: { msg: '' } });
 		close();
+	},
+	async feedback({ request, cookies }) {
+		const { email, linja } = auth(cookies);
+		const feedback = (await request.formData()).get('text');
+
+		await sendMail({
+			from: `"oispaeliitti.fi" <no-reply@oispaeliitti.fi>`,
+			to: FEEDBACK_EMAIL,
+			subject: `Palaute oispaeliitistä`,
+			text: `Palaute saatu käyttäjältä ${email} (${linja}): \n\n${feedback}`
+		});
 	}
 };
 

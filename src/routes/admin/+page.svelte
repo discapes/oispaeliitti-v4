@@ -40,7 +40,7 @@
 		<h1>Kielletyt nimet</h1>
 		<form action="?/block" method="POST" use:enhance>
 			<input class="bg p-1 border outline-none" name="nick" />
-			<input type="submit" />
+			<input class="button" type="submit" />
 		</form>
 		<div class="flex gap-3 flex-wrap w-[400px]">
 			{#each data.blockedNicks as nick}
@@ -56,7 +56,7 @@
 		</h1>
 		<form action="?/block" method="POST" use:enhance>
 			<input class="bg p-1 border outline-none" name="email" />
-			<input type="submit" />
+			<input class="button" type="submit" />
 		</form>
 		<div class="flex gap-3 flex-wrap w-[400px]">
 			{#each data.blockedEmails as email}
@@ -88,7 +88,7 @@
 			</select>
 			<label for="edit_new_value">Uusi arvo:</label>
 			<input id="edit_new_value" name="new_value" class="bg p-1 border outline-none mb-5" />
-			<input type="submit" />
+			<input class="button" type="submit" />
 		</form>
 	</div>
 
@@ -106,15 +106,6 @@
 </div>
 
 <style>
-	input[type='submit'],
-	.button {
-		@apply cursor-pointer border p-1;
-		background-color: rgb(68 64 60 / 0.5);
-	}
-	input[type='submit']:hover,
-	.button:hover {
-		background-color: rgb(68 64 60 / 0.8); /*hover:bg*/
-	}
 	h1 {
 		margin-top: 0;
 		margin-bottom: 30px;
