@@ -5,7 +5,9 @@ import preprocess from 'svelte-preprocess';
 const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
 	// for more information about preprocessors
-	preprocess: preprocess(),
+	preprocess: preprocess({
+		replace: [[/__VERCEL_ANALYTICS_ID__/g, process.env.VERCEL_ANALYTICS_ID]]
+	}),
 
 	kit: {
 		adapter: adapter(),
