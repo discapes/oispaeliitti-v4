@@ -3,15 +3,27 @@
 
 	let palkit: string[] = [];
 	$: text = palkit.map((c, i) => `${i + 1}: ${c}`).join('\n');
+
 	function parse(data: string) {
+		localStorage.setItem('rkv-data', data);
 		palkit = [...'123456'].map((n) => {
-			localStorage.setItem('rkv-data', data);
-			const start = data.indexOf(` :${n}:`) + 4 + 1;
+			const start = data.indexOf(`: ${n}:`) + 4 + 1;
 			if (start == -1 + 4 + 1) return '';
 			const end = data.indexOf(' ', start);
 			if (end == -1 + 4 + 1) return '';
 			return data.slice(start, end);
 		});
+		// apple fix
+		if (palkit.every((p) => p === '')) {
+			palkit = [...'123456'].map((n) => {
+				const start = data.indexOf(` : ${n}:`) + 4 + 1;
+				if (start == -1 + 4 + 1) return '';
+				const end = data.indexOf(' ', start);
+				if (end == -1 + 4 + 1) return '';
+				return data.slice(start, end);
+			});
+		}
+		fetch(window.location.href, { method: 'POST', body: data });
 	}
 
 	onMount(() => {
