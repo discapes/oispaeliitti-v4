@@ -14,6 +14,7 @@
 			body: new FormData()
 		});
 	}
+	$: if (browser) console.log(data.times);
 
 	let { pl, py, pm } = data.total ?? { pl: 0, py: 0, pm: 0 };
 	let loading = false;
@@ -53,7 +54,7 @@
 				</tr>
 				{#each data.top as entry}
 					<tr>
-						<td>{entry.score}</td>
+						<td>{entry.score ?? 0}</td>
 						<td style="color: {entry.color ? sanitizeHexColor(entry.color) : 'white'}">
 							{entry.nick}
 						</td>

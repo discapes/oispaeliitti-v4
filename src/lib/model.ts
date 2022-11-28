@@ -59,11 +59,13 @@ export async function getScoreMsgAndNick(
 	return <any>res;
 }
 
-export async function getLeaderboard(): Promise<{ nick: string; score: number; color?: string }[]> {
+export async function getLeaderboard(): Promise<
+	{ nick: string; score?: number; color?: string }[]
+> {
 	const [close, db] = mongo();
 	const res = await db
 		.find(
-			{ nick: { $exists: 1 /*$ne: ''*/ }, score: { $exists: 1 } },
+			{ nick: { $exists: 1 /*$ne: ''*/ } },
 			{ sort: { score: -1 }, limit: 10, projection: { nick: 1, score: 1, color: 1, _id: 0 } }
 		)
 		.toArray();

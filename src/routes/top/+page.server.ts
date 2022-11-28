@@ -119,7 +119,7 @@ type LoadResult =
 	  }
 	| {
 			loggedIn: true;
-			top: { score: number; nick: string; color?: string }[];
+			top: { score?: number; nick: string; color?: string }[];
 			email: string;
 			myscore?: string;
 			total: { pl: number; pm: number; py: number };
@@ -127,6 +127,11 @@ type LoadResult =
 			mynick?: string;
 			mymsg?: string;
 			admin_url?: string;
+			times: {
+				my: number;
+				leaderboard: number;
+				linjat: number;
+			};
 	  };
 
 export const load: PageServerLoad = async ({ cookies }): Promise<LoadResult> => {
@@ -143,15 +148,21 @@ export const load: PageServerLoad = async ({ cookies }): Promise<LoadResult> => 
 		};
 	const [, email, linja] = token.split('-');
 
-	const Pmy = getScoreMsgAndNick(email);
-	const Ptop = getLeaderboard();
-	const Plinjat = getLinjaScores();
+	const times = {
+		my: 0,
+		leaderboard: 0,
+		linjat: 0
+	};
+	const Pmy = time(getScoreMsgAndNick(email), (t) => (times.my = t));
+	const Ptop = time(getLeaderboard(), (t) => (times.leaderboard = t));
+	const Plinjat = time(getLinjaScores(), (t) => (times.linjat = t));
 	const [my, top, { yle, lulu, melu }] = await Promise.all([Pmy, Ptop, Plinjat]);
 
 	return {
 		loggedIn: true,
 		top,
 		email,
+		times,
 		total: {
 			pl: lulu, // * 10,
 			py: yle, // * 6,
@@ -164,3 +175,12 @@ export const load: PageServerLoad = async ({ cookies }): Promise<LoadResult> => 
 		admin_url: email === ADMIN_EMAIL ? URLS.ADMIN : undefined
 	};
 };
+
+async function time<T>(p: Promise<T>, log: (diff: number) => void) {
+	const before = Date.now();
+	const res = await p;
+	const after = Date.now();
+	const diff = after - before;
+	log(diff);
+	return res;
+}

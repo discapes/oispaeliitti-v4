@@ -15,13 +15,13 @@
 		</svg>
 		<ul>
 			<li aria-current={$page.url.pathname === '/' ? 'page' : undefined}>
-				<a href="/">Home</a>
+				<a data-sveltekit-prefetch href="/">Home</a>
 			</li>
 			<li aria-current={$page.url.pathname === '/top' ? 'page' : undefined}>
-				<a href="/top">Top</a>
+				<a data-sveltekit-prefetch href="/top">Top</a>
 			</li>
 			<li aria-current={$page.url.pathname === '/ohje' ? 'page' : undefined}>
-				<a href="/ohje">Ohje</a>
+				<a data-sveltekit-prefetch href="/ohje">Ohje</a>
 			</li>
 		</ul>
 		<svg viewBox="0 0 2 3" aria-hidden="true">
