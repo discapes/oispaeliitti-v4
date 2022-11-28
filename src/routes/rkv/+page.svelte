@@ -3,24 +3,21 @@
 
 	let palkit: string[] = [];
 	$: text = palkit.map((c, i) => `${i + 1}: ${c}`).join('\n');
-
-	let textfield: string;
-
 	function parse(data: string) {
 		palkit = [...'123456'].map((n) => {
+			localStorage.setItem('rkv-data', data);
 			const start = data.indexOf(` :${n}:`) + 4 + 1;
+			if (start == -1 + 4 + 1) return '';
 			const end = data.indexOf(' ', start);
+			if (end == -1 + 4 + 1) return '';
 			return data.slice(start, end);
 		});
-		setTimeout(() => {
-			textfield = '';
-		}, 0);
 	}
 
 	onMount(() => {
 		document.addEventListener('paste', (e) => {
+			e.preventDefault();
 			const data = e.clipboardData!.getData('text');
-			localStorage.setItem('rkv-data', data);
 			parse(data);
 		});
 		if (localStorage.getItem('rkv-data')) parse(localStorage.getItem('rkv-data')!);
@@ -108,8 +105,22 @@
 				<code>CTRL + V</code> (tai puhelimella <code>Liitä</code> seuraavaan kentään). Muista
 				kirjanmerkitä tämä sivusto!
 				<br />
-				<input bind:value={textfield} type="text" class="m-3" />
 			</p>
+			<div class="mb-5 mx-10 flex gap-3">
+				<input
+					on:input={(e) => {
+						parse(e.target.value);
+						e.target.value = '';
+					}}
+					type="text"
+					class="px-1 w-32"
+				/>
+				<!-- <button
+					on:click={() => parse(textfield)}
+					class="border rounded border-white hover:bg-white/80 bg-white/50 p-1"
+					>Paina jos ei toimi</button
+				> -->
+			</div>
 			{#if text}
 				<div class="bg-white/20 p-5 flex justify-center">
 					<!-- <pre>{text}</pre> -->
@@ -122,12 +133,16 @@
 						</tr>
 						{#each weekdays as wd, i}<tr>
 								<td>{wd}</td>
-								<td>{palkit[palkkiOrder[i] - 1]}</td>
+								<td>{palkit[palkkiOrder[i] - 1] || 'hyppy'}</td>
 								<td>
-									{rkv[i].findIndex((group) => group.includes(palkit[palkkiOrder[i] - 1])) + 1}
+									{palkit[palkkiOrder[i] - 1]
+										? rkv[i].findIndex((group) => group.includes(palkit[palkkiOrder[i] - 1])) + 1
+										: '-'}
 								</td>
 								<td class="whitespace-nowrap">
-									{times[rkv[i].findIndex((group) => group.includes(palkit[palkkiOrder[i] - 1]))]}
+									{palkit[palkkiOrder[i] - 1]
+										? times[rkv[i].findIndex((group) => group.includes(palkit[palkkiOrder[i] - 1]))]
+										: '11.15 - 13.30'}
 								</td>
 							</tr>
 						{/each}
