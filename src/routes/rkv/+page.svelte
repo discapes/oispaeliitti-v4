@@ -102,8 +102,8 @@
 				Etsi Wilman lukujärjestyksestä ensimmäinen kokonainen viikko, kopio kaikki painamalla
 				<code>CTRL + A</code> ja <code>CTRL + C</code> (tai puhelimella <code>Valitse kaikki</code>
 				ja <code>Kopioi</code>) ja liitä se tänne painamalla
-				<code>CTRL + V</code> (tai puhelimella <code>Liitä</code> seuraavaan kentään). Muista
-				kirjanmerkitä tämä sivusto!
+				<code>CTRL + V</code> (tai puhelimella <code>Liitä</code> seuraavaan kentään). Tiedot säilyy
+				eli kannattaa kirjanmerkitä!
 				<br />
 			</p>
 			<div class="mb-5 mx-10 flex gap-3">
