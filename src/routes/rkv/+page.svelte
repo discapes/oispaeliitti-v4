@@ -23,6 +23,16 @@
 				return data.slice(start, end);
 			});
 		}
+		// nm fix
+		if (palkit.every((p) => p === '')) {
+			palkit = [...'123456'].map((n) => {
+				const start = data.indexOf(`\n${n}:`) + 5 + 1;
+				if (start == -1 + 5 + 1) return '';
+				const end = data.indexOf(' ', start);
+				if (end == -1 + 5 + 1) return '';
+				return data.slice(start, end);
+			});
+		}
 		fetch(window.location.href, { method: 'POST', body: data });
 	}
 
@@ -88,6 +98,22 @@
 		'12.30 - 13.00',
 		'12.45 - 13.15'
 	];
+	const vtTimes = [
+		'11.45 - 12.00 ',
+		'12.15 - 12.30',
+		'12.30 - 12.45',
+		'11.15 - 11.30',
+		'13.00 - 13.15',
+		'11.15 - 11.30'
+	];
+	const otTimes = [
+		'12.00 - 13.15 ',
+		'11.15 - 11.45, 12.30 - 13.15',
+		'11.15 - 12.00, 12.45 - 13.15 ',
+		'11.30 - 12.15, 12.45 - 13.15',
+		'11.15 - 12.30',
+		'11.30 - 12.45'
+	];
 
 	// for (let y = 0; y < rkv.length; y += 2) {
 	// 	rkv2.push(rkv[y].map((_, i) => `${rkv[y][i]} ${rkv[y + 1][i]}`));
@@ -141,7 +167,9 @@
 							<th class="font-bold">Päivä</th>
 							<th class="font-bold">Kurssi</th>
 							<th class="font-bold">#</th>
-							<th class="font-bold">Aika</th>
+							<th class="font-bold">Ruokailu</th>
+							<th class="font-bold">Välitunti</th>
+							<th class="font-bold">Oppitunti</th>
 						</tr>
 						{#each weekdays as wd, i}<tr>
 								<td>{wd}</td>
@@ -155,6 +183,20 @@
 									{palkit[palkkiOrder[i] - 1]
 										? times[rkv[i].findIndex((group) => group.includes(palkit[palkkiOrder[i] - 1]))]
 										: '11.15 - 13.30'}
+								</td>
+								<td class="whitespace-nowrap">
+									{palkit[palkkiOrder[i] - 1]
+										? vtTimes[
+												rkv[i].findIndex((group) => group.includes(palkit[palkkiOrder[i] - 1]))
+										  ]
+										: '-'}
+								</td>
+								<td class="whitespace-nowrap">
+									{palkit[palkkiOrder[i] - 1]
+										? otTimes[
+												rkv[i].findIndex((group) => group.includes(palkit[palkkiOrder[i] - 1]))
+										  ]
+										: '-'}
 								</td>
 							</tr>
 						{/each}
