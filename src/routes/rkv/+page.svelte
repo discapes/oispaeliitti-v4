@@ -111,7 +111,7 @@
 		<div class="p-10 md:px-32 bg-sky-200 text-neutral-800">
 			<h1>TSYK jakso 3 ruokavuorot</h1>
 			<p class="m-5 max-w-[400px] min-w-[200px]">
-				Etsi Wilman lukujärjestyksestä ensimmäinen kokonainen viikko, kopio kaikki painamalla
+				Etsi Wilman lukujärjestyksestä ensimmäinen kokonainen viikko, kopioi kaikki painamalla
 				<code>CTRL + A</code> ja <code>CTRL + C</code> (tai puhelimella <code>Valitse kaikki</code>
 				ja <code>Kopioi</code>) ja liitä se tänne painamalla
 				<code>CTRL + V</code> (tai puhelimella <code>Liitä</code> seuraavaan kentään). Tiedot säilyy
