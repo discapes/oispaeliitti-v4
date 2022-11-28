@@ -7,7 +7,7 @@
 	function parse(data: string) {
 		localStorage.setItem('rkv-data', data);
 		palkit = [...'123456'].map((n) => {
-			const start = data.indexOf(`: ${n}:`) + 4 + 1;
+			const start = data.indexOf(`:${n}:`) + 4 + 1;
 			if (start == -1 + 4 + 1) return '';
 			const end = data.indexOf(' ', start);
 			if (end == -1 + 4 + 1) return '';
