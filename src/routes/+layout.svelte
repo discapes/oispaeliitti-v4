@@ -4,9 +4,9 @@
 	import { browser } from '$app/environment';
 	import { webVitals } from '$lib/vitals';
 	import { page } from '$app/stores';
+	import { inject } from '@vercel/analytics';
 
 	let analyticsId = '__VERCEL_ANALYTICS_ID__';
-	console.log(analyticsId);
 
 	$: if (browser && analyticsId) {
 		webVitals({
@@ -15,6 +15,8 @@
 			analyticsId
 		});
 	}
+
+	$: if(browser) inject();
 </script>
 
 <slot />
