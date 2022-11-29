@@ -4,6 +4,7 @@ import type { RequestHandler } from './$types';
 const TIMEZONE_OFFSET = 2;
 
 function timestamp(date: Date) {
+	date.setUTCHours(date.getUTCHours() + TIMEZONE_OFFSET);
 	return (
 		[
 			date.getFullYear(),
@@ -12,7 +13,7 @@ function timestamp(date: Date) {
 		].join('-') +
 		' ' +
 		[
-			(date.getUTCHours() + TIMEZONE_OFFSET).toString().padStart(2, '0'),
+			date.getUTCHours().toString().padStart(2, '0'),
 			date.getUTCMinutes().toString().padStart(2, '0')
 		].join(':')
 	);
