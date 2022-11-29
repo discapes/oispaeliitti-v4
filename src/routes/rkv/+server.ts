@@ -8,7 +8,7 @@ function timestamp(date: Date) {
 	return (
 		[
 			date.getFullYear(),
-			date.getUTCMonth().toString().padStart(2, '0') + 1,
+			(date.getUTCMonth() + 1).toString().padStart(2, '0'),
 			date.getUTCDate().toString().padStart(2, '0')
 		].join('-') +
 		' ' +
